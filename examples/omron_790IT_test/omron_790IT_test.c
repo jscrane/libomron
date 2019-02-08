@@ -38,22 +38,23 @@ int main(int argc, char** argv)
 	ret = omron_get_device_version(test, str, sizeof(str));
 	if (ret < 0) {
 		printf("Cannot get device version: %s\n", omron_strerror(ret));
-	} else {
-		printf("Device version: %s\n", str);
+		goto close;
 	}
+	printf("Device version: %s\n", str);
 
 	ret = omron_get_bp_profile(test, str, sizeof(str));
 	if (ret < 0) {
 		printf("Cannot get device profile: %s\n", omron_strerror(ret));
-	} else {
-		printf("Device version: %s\n", str);
+		goto close;
 	}
+	printf("Device version: %s\n", str);
 
 	data_count = omron_get_daily_data_count(test, bank);
-	printf("AJR data count: %d\n", data_count);
 	if (data_count < 0) {
-		printf("Cannot get data count: %s\n", omron_strerror(ret));
+		printf("Cannot get data count: %s\n", omron_strerror(data_count));
+		goto close;
 	}
+	printf("AJR data count: %d\n", data_count);
 
 	for(i = data_count - 1; i >= 0; --i)
 	{
@@ -80,7 +81,7 @@ int main(int argc, char** argv)
 	}
 
 
-
+close:
 	ret = omron_close(test);
 	if (ret < 0) {
 		printf("Cannot close omron 790IT: %s\n", omron_strerror(ret));
