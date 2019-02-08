@@ -52,18 +52,18 @@ Only bytes 1-5 are used, and would look like this in our notation
 
 === Command Format ===
 
-All commands from the computer to the Omron device consit of at least
+All commands from the computer to the Omron device consist of at least
 five bytes.  All commands begin with three mnemonic ASCII characters
 (except for the "clearing block" command described below, where these
 bytes are all zero) followed by one or more data bytes (which may or
-may not human readable ASCII, depending on command), followed, by a
+may not human readable ASCII, depending on command), followed by a
 terminating checksum byte which is the XOR of the data bytes.
 Commands may span multiple output reports.
 
 === Response Format ===
 
 For returns, the first 2-3 bytes specify the status. Returns may be
-broken up over multiple input reports
+broken up over multiple input reports.
 
 Successful input reports begin with ASCII "OK" and are either exactly two
 bytes or at least five bytes, the last of which is a checksum of the
@@ -253,7 +253,7 @@ sure of context)
 === Get Individual Reading Count ===
 
 ==== Description ====
-Used to retreive how many sessions are currently stored on the machine
+Used to retrieve how many sessions are currently stored on the machine
 
 ==== Command ====
 ---------------------------------------
@@ -315,20 +315,24 @@ Index of record, last 2 bytes of command
 17 bytes (3 bytes for "OK" success string, 14 bytes, binary)
 Will sometimes return "NO" message. If this happens, requery using the same command
 
+Bytes B and C are not sent on HEM-637, so the return is only 15 bytes long.
+
 Byte 0:: Last 2 digits of year
 Byte 1:: Month
 Byte 2:: Day
 Byte 3:: Hour (24-hour format) (NEED TO CONFIRM)
 Byte 4:: Minute 
 Byte 5:: Seconds
-Byte 6:: UNKNOWN
-Byte 7:: UNKNOWN
+Byte 6:: "Unit Number"
+Byte 7:: High byte of SYS (usually 0)
 Byte 8:: SYS
 Byte 9:: DIA
 Byte A:: Pulse
-Byte B:: UNKNOWN
+Byte B:: High byte of Status Flags (0)
 Byte C:: Status Flags 
 	 - 0x0X - Standalone reading 
+	 - 0x01 - "Irregular heartbeat detected during measurement"
+	 - 0x02 - "Movement detected during measurement"
 	 - 0x1X - First reading of a 3 reading average (TruRead function)
 	 - 0x2X - Second reading of a 3 reading average (TruRead function)
 	 - 0x3X - Third reading of a 3 reading average (TruRead function)
