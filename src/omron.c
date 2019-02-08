@@ -479,6 +479,42 @@ OMRON_DECLSPEC int omron_get_daily_data_count(omron_device* dev, unsigned char b
 	return (int)data[6];
 }
 
+// HEM-637
+OMRON_DECLSPEC int omron_get_daily_bp_data2(omron_device* dev, int bank, int index, omron_bp_day_info *r)
+{
+	unsigned char data[15];
+	unsigned char command[7] = { 'M', 'E', 'S', 0x00, 0x00,
+					index, index ^ bank};
+	int status;
+
+	status = omron_exchange_cmd(dev, DAILY_INFO_MODE, sizeof(command), command,
+			   sizeof(data), data);
+
+	r->present = 0;
+	if (status != sizeof(data)) {
+		MSG_ERROR("Returned data size (%d) does not match expected size (%lu)!\n", status, sizeof(data));
+		return status;
+	}
+	status = omron_check_success(data);
+	if (status) {
+		MSG_ERROR("Request failed.\n");
+		return status;
+	}
+	r->present = 1;
+	r->year = data[3];
+	r->month = data[4];
+	r->day = data[5];
+	r->hour = data[6];
+	r->minute = data[7];
+	r->second = data[8];
+	r->unit = data[9];
+	r->sys = (data[10] << 8) + data[11];
+	r->dia = data[12];
+	r->pulse = data[13];
+	r->flags = 0;
+	return 0;
+}
+
 OMRON_DECLSPEC omron_bp_day_info omron_get_daily_bp_data(omron_device* dev, int bank, int index)
 {
 	omron_bp_day_info r;
@@ -508,11 +544,11 @@ OMRON_DECLSPEC omron_bp_day_info omron_get_daily_bp_data(omron_device* dev, int 
 		r.hour = data[6];
 		r.minute = data[7];
 		r.second = data[8];
-		// Unknown: 9..10
-		r.sys = data[11];
+		r.unit = data[9];
+		r.sys = (data[10] << 8) + data[11];
 		r.dia = data[12];
 		r.pulse = data[13];
-		// Unknown: 14..16
+		r.flags = (data[14] << 8) + data[15];
 	}
 	return r;
 }

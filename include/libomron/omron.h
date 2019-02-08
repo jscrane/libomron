@@ -152,6 +152,7 @@ typedef struct
 	uint32_t minute;
 	/// Second of reading
 	uint32_t second;
+	uint8_t unit;
 	/// SYS reading
 	uint32_t sys;
 	/// DIA reading
@@ -160,6 +161,7 @@ typedef struct
 	uint32_t pulse;
 	/// 1 if week block is filled, 0 otherwise
 	uint8_t present;
+	uint16_t flags;
 } omron_bp_day_info;
 
 /**
@@ -421,6 +423,8 @@ extern "C" {
 	 * @return omron_bp_day_info structure with requested information
 	 */
 	OMRON_DECLSPEC omron_bp_day_info omron_get_daily_bp_data(omron_device* dev, int bank, int index);
+
+	OMRON_DECLSPEC int omron_get_daily_bp_data2(omron_device* dev, int bank, int index, omron_bp_day_info *di);
 
 	/**
 	 * Get weekly BP morning or evening info for a particular bank/week
