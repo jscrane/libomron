@@ -429,6 +429,22 @@ OMRON_DECLSPEC int omron_get_device_version(omron_device* dev, unsigned char* da
 	return status;
 }
 
+OMRON_DECLSPEC int omron_end(omron_device *dev, unsigned char *data, int size)
+{
+	int status;
+	unsigned char command[] = { 'E', 'N', 'D', 0xff, 0xff };
+
+	status = omron_send_command(dev, sizeof(command), command);
+	if (status < 0)
+		return status;
+	status = omron_get_command_return(dev, size, data);
+	if (status < 0)
+		return status;
+	data[status] = 0;
+	MSG_INFO("End returns: %s", data);
+	return status;
+}
+
 OMRON_DECLSPEC int omron_get_bp_profile(omron_device* dev, unsigned char* data, int data_size)
 {
 	int status;

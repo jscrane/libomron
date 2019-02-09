@@ -324,6 +324,17 @@ extern "C" {
 	OMRON_DECLSPEC int omron_close(omron_device* dev);
 
 	/**
+	 * Ends communication with the device
+	 *
+	 * @param dev Device pointer to end
+	 * @param report_buf Buffer to read into (should be >= 8 bytes)
+	 * @param report_size Size of report_buf (in bytes)
+	 *
+	 * @return Number of bytes read, or < 0 on error
+	 */
+	OMRON_DECLSPEC int omron_end(omron_device *dev, uint8_t *report_buf, int report_size);
+
+	/**
 	 * Sends the control message to set a new mode for the device
 	 *
 	 * @param dev Device pointer to set mode for
